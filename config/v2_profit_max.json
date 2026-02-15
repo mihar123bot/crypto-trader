@@ -1,0 +1,13 @@
+{
+  "name": "V2 Profit Max",
+  "enabled": true,
+  "position_size": 0.2,
+  "max_positions": 1,
+  "params": {
+    "ema_fast": 8,
+    "ema_slow": 20,
+    "rsi_period": 12,
+    "take_profit_pct": 3.0,
+    "trailing_stop_pct": 1.5
+  }
+}

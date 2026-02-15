@@ -1,0 +1,11 @@
+{
+  "name": "V6 Breakout",
+  "enabled": true,
+  "position_size": 0.2,
+  "max_positions": 1,
+  "params": {
+    "lookback_periods": 20,
+    "breakout_threshold_pct": 1.0,
+    "volume_confirmation": true
+  }
+}

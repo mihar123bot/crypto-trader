@@ -1,0 +1,11 @@
+{
+  "name": "V5 VWAP",
+  "enabled": true,
+  "position_size": 0.15,
+  "max_positions": 1,
+  "params": {
+    "vwap_period": 14,
+    "mean_reversion_threshold": 0.005,
+    "volume_spike_factor": 1.5
+  }
+}

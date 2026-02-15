@@ -1,0 +1,17 @@
+{
+  "name": "V3 Aggressive",
+  "enabled": true,
+  "position_size": 0.2,
+  "max_positions": 1,
+  "params": {
+    "ema_fast": 5,
+    "ema_slow": 13,
+    "rsi_period": 10,
+    "adx_period": 14,
+    "atr_period": 14,
+    "min_confidence": 0.65,
+    "min_adx": 25.0,
+    "max_daily_trades": 2,
+    "min_hold_periods": 6
+  }
+}

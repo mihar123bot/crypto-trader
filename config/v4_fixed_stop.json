@@ -1,0 +1,12 @@
+{
+  "name": "V4 Fixed Stop",
+  "enabled": true,
+  "position_size": 0.1,
+  "max_positions": 1,
+  "params": {
+    "ema_fast": 12,
+    "ema_slow": 26,
+    "stop_loss_pct": 2.0,
+    "take_profit_pct": 4.0
+  }
+}
