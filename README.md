@@ -2,6 +2,18 @@
 
 A Python-based paper trading system for algorithmic crypto trading with 6 distinct strategies, backtesting, and performance analysis.
 
+## Current Status (Feb 15, 2025)
+
+| Strategy | Status | Last Trade | P&L | Notes |
+|----------|--------|------------|-----|-------|
+| **V3 Aggressive** | ✅ Active | Closed +1.40% | +$1.40 | Best performer, optimized version with ADX filter |
+| **V4 Fixed Stop** | ✅ Active | Closed +0.89% | +$0.89 | Risk-managed, stable returns |
+| **V5 VWAP Cross** | ✅ Active | Closed +4.03% | +$0.60 | Mean reversion, strong R-multiple |
+
+**Last Updated**: Feb 15, 2025 17:25 EST  
+**Monitoring**: Every 5 minutes via cron  
+**Mode**: Paper trading (no real capital risk)
+
 ## Features
 
 - **6 Trading Strategies**: From baseline momentum to aggressive breakout detection
@@ -16,7 +28,7 @@ A Python-based paper trading system for algorithmic crypto trading with 6 distin
 |----------|-------------|----------|
 | **V1 Legacy** | EMA crossover with RSI filter | Baseline momentum |
 | **V2 Profit Max** | Aggressive take-profits (3%+) | Profit-focused trading |
-| **V3 Aggressive** | High-frequency, lower confidence threshold | Active trading (+0.36% current best) |
+| **V3 Aggressive** | Optimized high-frequency with ADX filter | Active trading (+1.40% current best) |
 | **V4 Fixed Stop** | Fixed 2% stop, 4% target | Risk management |
 | **V5 VWAP Cross** | Mean reversion to VWAP | Ranging markets |
 | **V6 Breakout** | Support/resistance breakouts | Trending markets |
@@ -152,11 +164,14 @@ crypto-trader/
 - **Stop Loss**: 1.5% trailing stop
 - **Boost**: Volume spike adds 15% confidence
 
-### V3 Aggressive (Current Best)
-- **Entry**: Multiple condition scoring (fast EMA, RSI recovery, volatility)
-- **Threshold**: Lower 0.55 minimum confidence
-- **Position Size**: Scales with confirming factors
-- **Best for**: High-activity trading environments
+### V3 Aggressive (Current Best - Optimized)
+- **Entry**: Multiple condition scoring with ADX trend filter (>25)
+- **Threshold**: 0.65 minimum confidence (raised from 0.55)
+- **Stop Loss**: Dynamic 1.5x ATR-based
+- **Take Profit**: 3x ATR-based
+- **Position Size**: Volatility-adjusted sizing
+- **Daily Limit**: Max 2 trades/day to prevent overtrading
+- **Best for**: High-activity trading with risk management
 
 ### V4 Fixed Stop
 - **Entry**: EMA crossover with ADX filter (>25)
