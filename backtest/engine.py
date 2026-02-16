@@ -110,6 +110,7 @@ class BacktestEngine:
         Returns:
             BacktestResult with performance metrics
         """
+        strategy.reset()
         portfolio = PortfolioState(initial_capital=self.initial_capital)
         
         equity_curve = []
@@ -144,10 +145,11 @@ class BacktestEngine:
                 current_time
             )
             
-            # Apply commission on trades
+            # Apply commission on trades (both entry and exit)
             if trade:
-                commission_cost = trade.size * trade.entry_price * self.commission
-                portfolio.cash -= commission_cost
+                entry_commission = trade.size * trade.entry_price * self.commission
+                exit_commission = trade.size * trade.exit_price * self.commission
+                portfolio.cash -= (entry_commission + exit_commission)
             
             # Record equity
             portfolio.record_equity(current_time, current_price)

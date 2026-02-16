@@ -45,6 +45,15 @@ class BaseStrategy(ABC):
         self.position_size = config.position_size
         self.params = config.params
     
+    def reset(self):
+        """
+        Reset any mutable state for a fresh backtest run.
+        
+        Subclasses should override this to reset their own state,
+        calling super().reset() first.
+        """
+        pass
+    
     @abstractmethod
     def generate_signal(self, data: pd.DataFrame) -> Signal:
         """
@@ -149,6 +158,33 @@ class BaseStrategy(ABC):
         
         return min(max(base_confidence, 0.0), 1.0)
     
+    def _neutral_signal(
+        self,
+        df: pd.DataFrame,
+        reason: str = ""
+    ) -> Signal:
+        """
+        Generate a neutral (no-op) signal.
+        
+        Args:
+            df: DataFrame with price data
+            reason: Optional reason for neutrality
+            
+        Returns:
+            Neutral Signal object
+        """
+        from datetime import datetime
+        price = df.iloc[-1]["close"] if len(df) > 0 else 0
+        return Signal(
+            strategy=self.name,
+            signal=SignalType.NEUTRAL,
+            confidence=0.0,
+            size=0.0,
+            timestamp=datetime.now(),
+            price=price,
+            metadata={"reason": reason} if reason else {}
+        )
+    
     def _calculate_ema(
         self, 
         series: pd.Series, 
@@ -252,6 +288,48 @@ class BaseStrategy(ABC):
         
         tr = pd.concat([high_low, high_close, low_close], axis=1).max(axis=1)
         return tr.rolling(window=period).mean()
+    
+    def _calculate_adx(
+        self,
+        data: pd.DataFrame,
+        period: int = 14
+    ) -> pd.Series:
+        """
+        Calculate Average Directional Index (ADX).
+        
+        ADX measures trend strength regardless of direction.
+        Values above 25 indicate a strong trend.
+        
+        Args:
+            data: DataFrame with high, low, close columns
+            period: Lookback period for ADX (default: 14)
+            
+        Returns:
+            Series with ADX values
+        """
+        high = data["high"]
+        low = data["low"]
+        close = data["close"]
+        
+        plus_dm = high.diff()
+        minus_dm = -low.diff()
+        
+        plus_dm = plus_dm.where((plus_dm > minus_dm) & (plus_dm > 0), 0)
+        minus_dm = minus_dm.where((minus_dm > plus_dm) & (minus_dm > 0), 0)
+        
+        tr1 = high - low
+        tr2 = (high - close.shift()).abs()
+        tr3 = (low - close.shift()).abs()
+        tr = pd.concat([tr1, tr2, tr3], axis=1).max(axis=1)
+        
+        atr = tr.rolling(window=period).mean()
+        plus_di = 100 * plus_dm.rolling(window=period).mean() / atr
+        minus_di = 100 * minus_dm.rolling(window=period).mean() / atr
+        
+        dx = (abs(plus_di - minus_di) / (plus_di + minus_di) * 100).fillna(0)
+        adx = dx.rolling(window=period).mean()
+        
+        return adx
     
     def _calculate_bollinger_bands(
         self,

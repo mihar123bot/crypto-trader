@@ -290,63 +290,9 @@ class V3AggressiveStrategy(BaseStrategy):
         
         return self._neutral_signal(df)
     
-    def _neutral_signal(
-        self, 
-        df: pd.DataFrame, 
-        reason: str = ""
-    ) -> Signal:
-        """
-        Generate a neutral signal.
-        
-        Args:
-            df: DataFrame with price data
-            reason: Optional reason for neutrality
-            
-        Returns:
-            Neutral Signal object
-        """
-        price = df.iloc[-1]["close"] if len(df) > 0 else 0
-        return Signal(
-            strategy=self.name,
-            signal=SignalType.NEUTRAL,
-            confidence=0.0,
-            size=0.0,
-            timestamp=datetime.now(),
-            price=price,
-            metadata={"reason": reason} if reason else {}
-        )
-    
-    def _calculate_adx(self, data: pd.DataFrame, period: int = 14) -> pd.Series:
-        """
-        Calculate Average Directional Index (ADX).
-        
-        Args:
-            data: DataFrame with high, low, close columns
-            period: Lookback period for ADX
-            
-        Returns:
-            Series with ADX values
-        """
-        # Calculate +DM and -DM
-        plus_dm = data["high"].diff()
-        minus_dm = data["low"].diff().abs() * -1
-        
-        plus_dm = plus_dm.where((plus_dm > minus_dm.abs()) & (plus_dm > 0), 0)
-        minus_dm = minus_dm.abs().where((minus_dm.abs() > plus_dm) & (minus_dm.abs() > 0), 0)
-        
-        # Calculate TR
-        tr1 = data["high"] - data["low"]
-        tr2 = (data["high"] - data["close"].shift()).abs()
-        tr3 = (data["low"] - data["close"].shift()).abs()
-        tr = pd.concat([tr1, tr2, tr3], axis=1).max(axis=1)
-        
-        # Smooth TR, +DM, -DM
-        atr = tr.rolling(window=period).mean()
-        plus_di = 100 * plus_dm.rolling(window=period).mean() / atr
-        minus_di = 100 * minus_dm.rolling(window=period).mean() / atr
-        
-        # Calculate DX and ADX
-        dx = (abs(plus_di - minus_di) / (plus_di + minus_di) * 100).fillna(0)
-        adx = dx.rolling(window=period).mean()
-        
-        return adx
+    def reset(self):
+        """Reset V3-specific state for fresh backtest runs."""
+        super().reset()
+        self._last_trade_time = None
+        self._daily_trade_count = 0
+        self._last_trade_date = None

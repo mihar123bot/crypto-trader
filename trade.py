@@ -4,14 +4,10 @@ CLI interface for the crypto trading bot.
 Usage: python trade.py --strategy V3 --backtest 90d
 """
 import argparse
-import sys
 import json
 from datetime import datetime
 from pathlib import Path
 import pandas as pd
-
-# Add parent to path for imports
-sys.path.insert(0, str(Path(__file__).parent))
 
 from strategies import get_strategy
 from config.manager import ConfigManager

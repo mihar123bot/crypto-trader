@@ -128,15 +128,3 @@ class V2ProfitMaxStrategy(BaseStrategy):
             )
         
         return self._neutral_signal(df)
-    
-    def _neutral_signal(self, df: pd.DataFrame) -> Signal:
-        price = df.iloc[-1]["close"] if len(df) > 0 else 0
-        return Signal(
-            strategy=self.name,
-            signal=SignalType.NEUTRAL,
-            confidence=0.0,
-            size=0.0,
-            timestamp=datetime.now(),
-            price=price,
-            metadata={}
-        )

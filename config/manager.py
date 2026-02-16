@@ -55,8 +55,9 @@ class StrategyConfig:
         Returns:
             StrategyConfig instance
         """
-        params = data.pop("params", {})
-        return cls(params=params, **data)
+        params = data.get("params", {})
+        filtered = {k: v for k, v in data.items() if k != "params"}
+        return cls(params=params, **filtered)
     
     def to_dict(self) -> Dict[str, Any]:
         """

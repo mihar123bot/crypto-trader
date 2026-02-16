@@ -120,21 +120,7 @@ class PortfolioState:
         strategies_to_close = []
         
         for strategy, position in self.positions.items():
-            hit_stop = False
-            
-            if position.stop_loss:
-                if position.signal_type == SignalType.LONG and current_price <= position.stop_loss:
-                    hit_stop = True
-                elif position.signal_type == SignalType.SHORT and current_price >= position.stop_loss:
-                    hit_stop = True
-            
-            if position.take_profit and not hit_stop:
-                if position.signal_type == SignalType.LONG and current_price >= position.take_profit:
-                    hit_stop = True
-                elif position.signal_type == SignalType.SHORT and current_price <= position.take_profit:
-                    hit_stop = True
-            
-            if hit_stop:
+            if position.check_stop_loss(current_price) or position.check_take_profit(current_price):
                 strategies_to_close.append(strategy)
         
         # Close positions that hit stops
